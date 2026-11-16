@@ -17,10 +17,6 @@ subject to  Ax  = b
 
 with `P` symmetric positive semidefinite. LPs (`P = 0`) work too.
 
-This is an educational implementation written for the *Applied Optimal Control*
-course. It is not the official PIQP solver: for real applications, use the
-[official C++ implementation with Python bindings](https://github.com/PREDICT-EPFL/piqp).
-
 ## How it works
 
 - **Interior-point method**: Mehrotra predictor-corrector steps on the KKT
