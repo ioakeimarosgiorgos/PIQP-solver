@@ -61,12 +61,13 @@ A, b = np.zeros((0, 2)), np.zeros(0)          # no equality constraints
 G = np.array([[1., 0], [0, 1], [-1, 0], [0, -1], [1, 2]])
 h = np.array([1.5, 1.5, 0, 0, 2.5])
 
-res = piqp((P, c, A, b, G, h), verbose=True)
-print(res.status, res.x)                      # solved [1.3 0.6]
+x, y, z, s, status = piqp((P, c, A, b, G, h), verbose=True)
+print(status, x)                              # solved [1.3 0.6]
 ```
 
-`piqp` returns a `Result` with fields `x, y, z, s, status, iterations, pres,
-dres, gap`. `status` is `"solved"` or `"max_iter_reached"`.
+`piqp` returns the primal solution `x`, the multipliers `y` (equalities) and
+`z` (inequalities), the slacks `s`, and `status`, which is `"solved"` or
+`"max_iter_reached"`.
 
 Optional arguments: `eps_abs`, `eps_rel` (default `1e-8`), `max_iter` (100),
 the initial and minimum regularization `rho`, `delta`, `rho_min`, `delta_min`,
@@ -80,7 +81,6 @@ To leave out a constraint type, pass empty arrays of the right shape, e.g.
 | File | Contents |
 |------|----------|
 | `piqp_solver.py` | the solver |
-| `demo.ipynb` | 2-D example with a plot, plus a random QP checked against SciPy |
 | `test_solver.py` | tests: 30 random QPs vs. SciPy SLSQP, an LP, an equality-only QP, an infeasible QP |
 
 ```bash

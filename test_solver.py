@@ -31,34 +31,34 @@ def test_random_qps():
         n, p, m = 10 + seed % 7, seed % 4, 15 + seed % 5
         qp = random_qp(n, p, m, seed)
         P, c, *_ = qp
-        res = piqp(qp)
-        assert res.status == "solved", seed
-        f = 0.5 * res.x @ P @ res.x + c @ res.x
+        x, y, z, s, status = piqp(qp)
+        assert status == "solved", seed
+        f = 0.5 * x @ P @ x + c @ x
         f_ref = reference(*qp)
         assert abs(f - f_ref) <= 1e-6 * max(1., abs(f_ref)), (seed, f, f_ref)
 
 
 def test_lp():
     # min -x1 - x2  s.t.  x1 + x2 <= 1, x >= 0   -> optimal value -1
-    res = piqp((np.zeros((2, 2)), -np.ones(2), np.zeros((0, 2)), np.zeros(0),
+    x, y, z, s, status = piqp((np.zeros((2, 2)), -np.ones(2), np.zeros((0, 2)), np.zeros(0),
                 np.array([[1., 1], [-1, 0], [0, -1]]), np.array([1., 0, 0])))
-    assert res.status == "solved"
-    assert abs(res.x.sum() - 1) < 1e-6
+    assert status == "solved"
+    assert abs(x.sum() - 1) < 1e-6
 
 
 def test_equality_only():
     # min 1/2 |x|^2  s.t.  x1 + x2 = 1   -> x = (0.5, 0.5)
-    res = piqp((np.eye(2), np.zeros(2), np.array([[1., 1]]), np.array([1.]),
+    x, y, z, s, status = piqp((np.eye(2), np.zeros(2), np.array([[1., 1]]), np.array([1.]),
                 np.zeros((0, 2)), np.zeros(0)))
-    assert res.status == "solved"
-    assert np.allclose(res.x, [0.5, 0.5], atol=1e-6)
+    assert status == "solved"
+    assert np.allclose(x, [0.5, 0.5], atol=1e-6)
 
 
 def test_infeasible_not_reported_as_solved():
     # x <= -1 and x >= 1
-    res = piqp((np.eye(1), np.zeros(1), np.zeros((0, 1)), np.zeros(0),
+    x, y, z, s, status = piqp((np.eye(1), np.zeros(1), np.zeros((0, 1)), np.zeros(0),
                 np.array([[1.], [-1]]), np.array([-1., -1])), max_iter=30)
-    assert res.status != "solved"
+    assert status != "solved"
 
 
 if __name__ == "__main__":
